@@ -50,6 +50,7 @@ class GameLogicScreenState extends State<GameLogicScreen> {
                   child: GridViewWidget(
                     topLevel: true,
                     gameLogicBloc: widget._gameLogicBloc,
+                    gameLogicState: currentState,
                   )),
             ),
           );

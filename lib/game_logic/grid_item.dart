@@ -3,13 +3,13 @@ enum ItemState { X, O, empty }
 class GridItem {
   int i, j;
   ItemState itemState;
-  List<List>? innerField;
+  List<List>? innerFields;
 
-  bool get isTopLevelField => innerField != null;
+  bool get isTopLevelField => innerFields != null;
 
   GridItem.topLevelField(this.i, this.j)
       : itemState = ItemState.empty,
-        innerField = List.generate(3, (i) => List.generate(3, (j) => GridItem.innerLevelField(i, j)));
+        innerFields = List.generate(3, (i) => List.generate(3, (j) => GridItem.withInnerFields(i, j)));
 
-  GridItem.innerLevelField(this.i, this.j) : itemState = ItemState.empty;
+  GridItem.withInnerFields(this.i, this.j) : itemState = ItemState.empty;
 }

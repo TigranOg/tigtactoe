@@ -11,7 +11,7 @@ class GameLogicBloc extends Bloc<GameLogicEvent, GameLogicState> {
         onData: (state) => state,
         onError: (error, stackTrace) {
           log('$error', name: 'GameLogicBloc', error: error, stackTrace: stackTrace);
-          return UnGameLogicState();
+          return UnGameLogicState(0);
         },
       );
     });

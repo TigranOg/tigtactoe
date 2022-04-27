@@ -9,7 +9,7 @@ class GameLogicPage extends StatefulWidget {
 }
 
 class _GameLogicPageState extends State<GameLogicPage> {
-  final _gameLogicBloc = GameLogicBloc(UnGameLogicState());
+  final _gameLogicBloc = GameLogicBloc(UnGameLogicState(0));
 
   @override
   Widget build(BuildContext context) {

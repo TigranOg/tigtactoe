@@ -1,12 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:tig_tag_toe/game_logic/game_logic_bloc.dart';
-import 'package:tig_tag_toe/game_logic/game_logic_event.dart';
 import 'package:tig_tag_toe/game_logic/grid_item.dart';
+import 'package:tig_tag_toe/game_logic/index.dart';
 
 class GridViewWidget extends StatelessWidget {
-  const GridViewWidget({required this.topLevel, required this.gameLogicBloc, Key? key}) : super(key: key);
+  const GridViewWidget(
+      {required this.topLevel, required this.gameLogicBloc, required this.gameLogicState, this.parentI = -1, this.parentJ = -1, Key? key})
+      : super(key: key);
   final bool topLevel;
   final GameLogicBloc gameLogicBloc;
+  final InGameLogicState gameLogicState;
+  final int parentI, parentJ;
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +36,21 @@ class GridViewWidget extends StatelessWidget {
                 child: GridViewWidget(
                   topLevel: false,
                   gameLogicBloc: gameLogicBloc,
+                  gameLogicState: gameLogicState,
+                  parentI: i,
+                  parentJ: j,
                 ))
             : Container(
                 color: Colors.white,
                 child: Center(
                   child: GridItemWidget(
-                    gridItem: GridItem.innerLevelField(1, 2),
+                    key: Key('$i $j $parentI $parentJ'),
                     gameLogicBloc: gameLogicBloc,
+                    gameLogicState: gameLogicState,
+                    itemI: i,
+                    itemJ: j,
+                    parentI: parentI,
+                    parentJ: parentJ,
                   ),
                 ),
               );
@@ -47,12 +60,29 @@ class GridViewWidget extends StatelessWidget {
 }
 
 class GridItemWidget extends StatelessWidget {
-  const GridItemWidget({required this.gridItem, required this.gameLogicBloc, Key? key}) : super(key: key);
-  final GridItem gridItem;
+  const GridItemWidget(
+      {required this.gameLogicBloc,
+      required this.gameLogicState,
+      required this.itemI,
+      required this.itemJ,
+      required this.parentI,
+      required this.parentJ,
+      Key? key})
+      : super(key: key);
   final GameLogicBloc gameLogicBloc;
+  final InGameLogicState gameLogicState;
+  final int itemI, itemJ, parentI, parentJ;
 
   @override
   Widget build(BuildContext context) {
+    final model = gameLogicState.model;
+    final topField = model.topFields[parentI][parentJ];
+    final GridItem innerField = topField.innerFields?[itemI][itemJ];
+
+    if (innerField.itemState != ItemState.empty) {
+      log('');
+    }
+
     return Container(
       color: Colors.white,
       child: ElevatedButton(
@@ -61,9 +91,17 @@ class GridItemWidget extends StatelessWidget {
           onPrimary: Colors.red,
         ),
         onPressed: () {
-          gameLogicBloc.add(LoadGameLogicEvent());
+          if (innerField.itemState == ItemState.empty) {
+            gameLogicBloc.add(MakeMoveEvent(itemI: itemI, itemJ: itemJ, parentI: parentI, parentJ: parentJ));
+          }
         },
-        child: Container(),
+        child: Visibility(
+          visible: innerField.itemState != ItemState.empty,
+          child: Text(
+            innerField.itemState.name,
+            textAlign: TextAlign.center,
+          ),
+        ),
       ),
     );
   }
