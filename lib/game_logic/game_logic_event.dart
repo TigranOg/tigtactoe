@@ -45,13 +45,20 @@ class MakeMoveEvent extends GameLogicEvent {
 
         final GameLogicModel model = currentState.model;
         final topField = model.topFields[parentI][parentJ];
-        final GridItem innerField = topField.innerFields?[itemI][itemJ];
-        innerField.itemState = ItemState.X;
+        final GridItem? innerField = topField.innerFields?[itemI][itemJ];
+        innerField?.itemState = ItemState.X;
 
-        final InGameLogicState state = currentState.copyWith(gameLogicModel: model);
+        int evaluation = MiniMaxAlgo.evaluate(topField.innerFields!);
+
+        // await Future.delayed(const Duration(seconds: 2));
+        final GameLogicState state;
+        if (evaluation != 0) {
+          state = WinState(evaluation: evaluation);
+        } else {
+          state = currentState.copyWith(gameLogicModel: model);
+          bloc?.add(AIMoveEvent(topFieldI: 0, topFieldJ: 0));
+        }
         yield state;
-        await Future.delayed(const Duration(seconds: 2));
-        bloc?.add(AIMoveEvent(topFieldI: itemI, topFieldJ: itemJ));
       }
     } catch (_, stackTrace) {
       l.log('$_', name: 'MakeMoveEvent', error: _, stackTrace: stackTrace);
@@ -76,18 +83,71 @@ class AIMoveEvent extends GameLogicEvent {
           int randomI = Random().nextInt(3);
           int randomJ = Random().nextInt(3);
 
-          final GridItem innerField = topField.innerFields?[randomI][randomJ];
-          if (innerField.itemState == ItemState.empty) {
-            innerField.itemState = ItemState.O;
+          final GridItem? innerField = topField.innerFields?[randomI][randomJ];
+          if (innerField?.itemState == ItemState.empty) {
+            innerField?.itemState = ItemState.O;
             moveIsDone = true;
           }
         }
 
-        final InGameLogicState state = currentState.copyWith(gameLogicModel: model);
+        final GameLogicState state;
+
+        int evaluation = MiniMaxAlgo.evaluate(topField.innerFields!);
+        if (evaluation != 0) {
+          state = WinState(evaluation: evaluation);
+        } else {
+          state = currentState.copyWith(gameLogicModel: model);
+        }
+
         yield state;
       }
     } catch (_, stackTrace) {
       l.log('$_', name: 'MakeMoveEvent', error: _, stackTrace: stackTrace);
     }
+  }
+}
+
+class MiniMaxAlgo {
+  static int evaluate(List<List<GridItem>> board) {
+    //Check rows
+    for (int row = 0; row < 3; row++) {
+      if (board[row][0] == board[row][1] && board[row][1] == board[row][2]) {
+        if (board[row][0].itemState == ItemState.X) {
+          return 10;
+        } else if (board[row][0].itemState == ItemState.O) {
+          return -10;
+        }
+      }
+    }
+
+    //Check columns
+    for (int column = 0; column < 3; column++) {
+      if (board[0][column] == board[1][column] && board[1][column] == board[2][column]) {
+        if (board[0][column].itemState == ItemState.X) {
+          return 10;
+        } else if (board[0][column].itemState == ItemState.O) {
+          return -10;
+        }
+      }
+    }
+
+    //Check diagonals
+    if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+      if (board[0][0].itemState == ItemState.X) {
+        return 10;
+      } else if (board[0][0].itemState == ItemState.O) {
+        return -10;
+      }
+    }
+
+    if (board[2][0] == board[1][1] && board[1][1] == board[0][2]) {
+      if (board[1][1].itemState == ItemState.X) {
+        return 10;
+      } else if (board[1][1].itemState == ItemState.O) {
+        return -10;
+      }
+    }
+
+    return 0;
   }
 }

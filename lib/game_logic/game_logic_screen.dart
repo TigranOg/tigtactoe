@@ -54,7 +54,22 @@ class GameLogicScreenState extends State<GameLogicScreen> {
                   )),
             ),
           );
+        } else if (currentState is WinState) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(currentState.xWon() ? 'X Won' : 'O won'),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text('Restart'),
+                  onPressed: _load,
+                )
+              ],
+            ),
+          );
         }
+
         return const Center(
           child: CircularProgressIndicator(),
         );

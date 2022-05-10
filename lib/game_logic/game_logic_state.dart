@@ -37,6 +37,19 @@ class InGameLogicState extends GameLogicState {
   String toString() => 'InGameLogicState';
 }
 
+class WinState extends GameLogicState {
+  final int evaluation;
+
+  WinState({required this.evaluation}) : super(0);
+
+  bool xWon() {
+    return evaluation == 10;
+  }
+
+  @override
+  String toString() => 'WinState';
+}
+
 class GameLogicModel extends Equatable {
   final topFields = List.generate(3, (i) => List.generate(3, (j) => GridItem.topLevelField(i, j)));
 

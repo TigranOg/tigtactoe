@@ -77,9 +77,9 @@ class GridItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = gameLogicState.model;
     final topField = model.topFields[parentI][parentJ];
-    final GridItem innerField = topField.innerFields?[itemI][itemJ];
+    final GridItem? innerField = topField.innerFields?[itemI][itemJ];
 
-    if (innerField.itemState != ItemState.empty) {
+    if (innerField?.itemState != ItemState.empty) {
       log('');
     }
 
@@ -91,14 +91,14 @@ class GridItemWidget extends StatelessWidget {
           onPrimary: Colors.red,
         ),
         onPressed: () {
-          if (innerField.itemState == ItemState.empty) {
+          if (innerField?.itemState == ItemState.empty) {
             gameLogicBloc.add(MakeMoveEvent(itemI: itemI, itemJ: itemJ, parentI: parentI, parentJ: parentJ));
           }
         },
         child: Visibility(
-          visible: innerField.itemState != ItemState.empty,
+          visible: innerField?.itemState != ItemState.empty,
           child: Text(
-            innerField.itemState.name,
+            innerField!.itemState.name,
             textAlign: TextAlign.center,
           ),
         ),
