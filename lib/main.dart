@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'game_logic/game_logic_page.dart';
+import 'package:tig_tag_toe/game_board_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const GameLogicPage(),
+      home: const GameBoardPage(),
     );
   }
 }
